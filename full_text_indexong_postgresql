@@ -1,0 +1,20 @@
+ CREATE TABLE articles (
+    id SERIAL PRIMARY KEY,
+    title TEXT,
+    content TEXT
+);
+
+
+-- Create GIN index for full-text search
+CREATE INDEX idx_articles_content 
+ON articles USING gin(to_tsvector('english', content));
+
+-- Search for articles containing both "database" and "postgres"
+SELECT *
+FROM articles
+WHERE to_tsvector('english', content) @@ to_tsquery('database & postgres');
+
+
+SELECT to_tsvector('database indexing improves performance')
+@@ to_tsquery('database & index');
+
