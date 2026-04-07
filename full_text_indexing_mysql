@@ -1,0 +1,34 @@
+CREATE TABLE articles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    body TEXT,
+    published_at TIMESTAMP,
+    FULLTEXT(title, body)
+);
+
+
+SELECT *
+FROM articles
+WHERE MATCH(title, body)
+AGAINST ('database indexing');
+
+SELECT *
+FROM articles
+WHERE MATCH(title, body)
+AGAINST ('+database +indexing' IN BOOLEAN MODE);
+
+SELECT *
+FROM articles
+WHERE MATCH(title, body)
+AGAINST ('+database -mysql' IN BOOLEAN MODE);
+
+SELECT *
+FROM articles
+WHERE MATCH(title, body)
+AGAINST ('index*' IN BOOLEAN MODE);
+
+SELECT *
+FROM articles
+WHERE MATCH(title, body)
+AGAINST ('database' WITH QUERY EXPANSION);
+
