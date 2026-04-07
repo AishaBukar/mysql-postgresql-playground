@@ -1,0 +1,38 @@
+--MySQL spatial indexes can be created in three ways
+-- During table creation
+
+CREATE TABLE stores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    location POINT NOT NULL,
+    SPATIAL INDEX(location)
+);
+
+-- Using alter table
+ALTER TABLE stores
+ADD SPATIAL INDEX(location);
+
+--Using create index
+CREATE SPATIAL INDEX idx_location
+ON stores(location);
+
+
+-- insert values
+INSERT INTO stores (name, location) VALUES
+('Store A', POINT(3.3792, 6.5244)),
+('Store B', POINT(3.4000, 6.5000)),
+('Store C', POINT(3.3500, 6.5500));
+
+
+-- select statement
+SELECT *
+FROM stores
+WHERE ST_Distance_Sphere(location, POINT(3.3792, 6.5244)) < 5000;
+
+-- working with bounding rectangles
+SELECT *
+FROM stores
+WHERE MBRContains(
+    ST_Buffer(POINT(3.3792, 6.5244), 0.05),
+    location
+);
