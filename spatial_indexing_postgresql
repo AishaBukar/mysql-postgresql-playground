@@ -1,0 +1,45 @@
+CREATE EXTENSION postgis;
+
+CREATE TABLE stores (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    location geometry(Point, 4326)
+);
+
+CREATE INDEX idx_store_location
+ON stores
+USING GIST (location);
+
+
+-- select statements
+SELECT *
+FROM stores
+WHERE location && ST_MakeEnvelope(3.3, 6.5, 3.5, 6.6, 4326);
+
+SELECT *
+FROM stores
+WHERE ST_DWithin(
+    location,
+    ST_MakePoint(3.3792, 6.5244)::geography,
+    5000
+);
+
+--postgresql suppors KNN forsearches using the <-> operator
+SELECT *
+FROM stores
+ORDER BY location <-> ST_MakePoint(3.3792, 6.5244)
+LIMIT 5;
+
+EXPLAIN ANALYZE
+SELECT *
+FROM places
+WHERE location && ST_MakeEnvelope(...);
+
+
+--space partioned GiST 
+CREATE INDEX idx_points_spgist 
+ON locations USING spgist (geom);
+
+--BRIN index
+CREATE INDEX idx_gps_brin
+ON gps_logs USING brin (geom);
