@@ -1,0 +1,14 @@
+CREATE INDEX idx_email
+ON users(email)
+INVISIBLE;
+
+-- to make the table invisible
+ALTER TABLE users
+ALTER INDEX idx_email INVISIBLE;
+
+-- to make the table visible
+ALTER TABLE users
+ALTER INDEX idx_email VISIBLE;
+
+-- drop index after testing
+DROP INDEX idx_email ON users;
